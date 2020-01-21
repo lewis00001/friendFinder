@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Survey</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="./css/reset.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
+        integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
+        integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous">
+    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
+        integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous">
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery.js"></script>
+
+    <link href="https://fonts.googleapis.com/css?family=Goblin+One|Lora|Macondo+Swash+Caps" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="./css/survey.css">
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="jumbotron jumbotron-fluid">
+                    <div class="container">
+                        <h1>Questionnaire</h1>
+                        <hr>
+                        <h2>Answer the questions using this scale:<br>
+                            1 (strongly agree) <br>
+                            5 (strongly disagree)</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-2" id="spacer"></div>
+            <div class="col-lg-8">
+
+                <div class="card">
+                    <div class="card-body">
+                        <h2>About You:</h2>
+                        <hr>
+                        <!-- input section -->
+                        <form method="POST" role="form">
+                            <div class="form-group">
+                                <label for="name">Name (required)</label>
+                                <input type="text" class="form-control" id="name" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="photo">Link to Photo (required)</label>
+                                <input type="text" class="form-control" id="photo" required>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- question section -->
+                    <div class="card-body">
+                        <h2>Questions</h2>
+                        <hr>
+                        <!-- question output from js/genQ.js -->
+                        <div class="q-body"></div>
+
+                        <br>
+                        <div class="text-right">
+                            <button type="button" class="btn btn-secondary btn-md submit" id="add-btn"
+                                data-toggle="modal" data-target="#myModal">Find Friends</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="bestFriend">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="bestFriend">You've made a friend!</h4>
+                    </div>
+                    <div class="modal-body" id="friend-info">
+                        <h5 id="friend-name"></h5>
+                        <img id="friend-photo" src="" alt="Meet your new friend!">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+</body>
+
+</html>
+
+<!-- scripts section -->
+<script src="../js/genQ.js"></script>
+<script type="text/javascript">
+    var allAnswers = [];
+
+    $(".submit").on("click", function (event) {
+
+        var newFriend = {
+            name: $("#name").val().trim(),
+            photo: $("#photo").val().trim(),
+
+            answers: function () {
+                for (i = 1; i < 11; i++) {
+                    var answer = $('input[name="q' + i + '"]:checked').val();
+                    allAnswers.push(parseInt(answer));
+                }
+                return allAnswers;
+            }
+        };
+
+        console.log(newFriend);
+
+        $.post("/api/friends", newFriend, function (data) {
+
+            if (data) {
+                alert("Get ready to make new friends!");
+            } else {
+                alert("Uh-oh! Something went wrong with your survey!");
+            }
+
+            // clears the form on submit
+            $("#name").val("");
+            $("#photo").val("");
+            $('input[type="radio"]').attr('checked', false);
+
+        }).done(function () {
+            // calls friends api
+            $.ajax({
+                url: "/api/friends",
+                method: "GET",
+                datatype: 'json'
+
+            }).done(function (res, err) {
+                if (err) {
+                    console.log(err);
+                }
+                // console.log(res);
+                var current = res[res.length - 1];
+                // console.log(current);
+                // stores new user's best match and displays to modal
+                var bestFriend = current.bestie;
+                console.log(bestFriend);
+                $("#friend-name").text("Hi " + current.name + ", my name is " + bestFriend
+                    .name + "!");
+                $("img#friend-photo").attr("src", bestFriend.photo);
+            });
+
+        }); // ENDS post.done()
+
+    }); // ENDS button onClick()
+</script>
