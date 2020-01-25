@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <title>Survey</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="./css/reset.css">
+    <link rel="stylesheet" type="text/css" href="../css/reset.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
         integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
@@ -17,11 +17,7 @@
         integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous">
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery.js"></script>
-
-    <link href="https://fonts.googleapis.com/css?family=Goblin+One|Lora|Macondo+Swash+Caps" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="./css/survey.css">
 </head>
 
 <body>
@@ -52,12 +48,12 @@
                         <form method="POST" role="form">
                             <div class="form-group">
                                 <label for="name">Name (required)</label>
-                                <input type="text" class="form-control" id="name" required>
+                                <input type="text" class="input" id="name" required>
                             </div>
 
                             <div class="form-group">
                                 <label for="photo">Link to Photo (required)</label>
-                                <input type="text" class="form-control" id="photo" required>
+                                <input type="text" class="input" id="photo" required>
                             </div>
                         </form>
                     </div>
@@ -66,13 +62,15 @@
                     <div class="card-body">
                         <h2>Questions</h2>
                         <hr>
-                        <!-- question output from js/genQ.js -->
+                        <!-- question output -->
                         <div class="q-body"></div>
-
                         <br>
                         <div class="text-right">
-                            <button type="button" class="btn btn-secondary btn-md submit" id="add-btn"
-                                data-toggle="modal" data-target="#myModal">Find Friends</button>
+                            <button type="button" class="btn btn-secondary btn-md submit" id="submit">Find
+                                Friend</button>
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal"
+                                id="found-friend">Friend Found - Click to View</button>
                         </div>
                     </div>
                 </div>
@@ -80,28 +78,110 @@
         </div>
 
         <!-- Modal -->
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="bestFriend">
+        <div class="modal fade" id="modal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="bestFriend">You've made a friend!</h4>
+                        <h5 class="modal-title">Meet Your New Friend!</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                    <div class="modal-body" id="friend-info">
-                        <h5 id="friend-name"></h5>
-                        <img id="friend-photo" src="" alt="Meet your new friend!">
+                    <div class="modal-body">
+                        <div class="m-img" style="width:100%">
+                            <img id="match-pic" alt="match pic" style="width:100%">
+                        </div>
+                        <div class="m-name" style="padding:30px,0,30px,0; font-weight:700;"></div>
+                        <div class="m-percent"></div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
         </div>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+
+                $("#found-friend").hide();
+
+                let questionArray = [
+                    "Summer is better than winter.",
+                    "Spicy food is the best.",
+                    "You enjoying races (like a 5K or marathon).",
+                    "Rainy days are better then sunny ones.",
+                    "Sports are the best things ever.",
+                    "You're ever an optimist.",
+                    "Country music is where it's at.",
+                    "You're a morning person",
+                    "Yoga is the best thing ever!",
+                    "Math is something to do for fun."
+                ];
+
+                // added questions and radio selectors #imsoclever
+                for (let i = 0; i < questionArray.length; i++) {
+                    let currentNum = parseInt(i + 1);
+                    $(".q-body").append(
+                        "<div class='form-group'>" +
+                        "<label for='question-" + currentNum + "'>" +
+                        "<h4>" + currentNum + ". " + questionArray[i] + "</h4>" +
+                        "</label>" +
+                        "<div class='card-body input q" + currentNum + "' id=''>");
+                    // creates and labels radio selections
+                    for (let j = 1; j <= 5; j++) {
+                        $(".q" + currentNum).append(
+                            "<div class='form-check form-check-inline'>" +
+                            "<label class='form-check-label'>" +
+                            "<input class='form-check-input' type='radio' name='q" + currentNum +
+                            "' id='inlineRadio" + j + "' value='" + j + "'> " + j +
+                            "</label>" +
+                            "</div>"
+                        );
+                    }
+                    $(".q-body").append(
+                        "</div>" +
+                        "</div>" +
+                        "<hr>"
+                    );
+                };
+            });
+
+            // submit button
+            $(document).on("click", ".submit", function (event) {
+
+                //creates a new friend from the values submitted
+                var userInput = {
+                    name: $('#name').val(),
+                    photo: $('#photo').val(),
+                    scores: [
+                        $('input[name="q1"]:checked').val(),
+                        $('input[name="q2"]:checked').val(),
+                        $('input[name="q3"]:checked').val(),
+                        $('input[name="q4"]:checked').val(),
+                        $('input[name="q5"]:checked').val(),
+                        $('input[name="q6"]:checked').val(),
+                        $('input[name="q7"]:checked').val(),
+                        $('input[name="q8"]:checked').val(),
+                        $('input[name="q9"]:checked').val(),
+                        $('input[name="q10"]:checked').val()
+                    ]
+                };
+                console.log(userInput);
+
+                //ajax, posts data to friends API and gets match data
+                $.post("/api/friends", userInput, function (data) {
+                    // gathers match data for display
+                    $("#match-pic").attr("src", data.photo);
+                    $(".m-name").text(data.name);
+                    $(".m-percent").text("Percentage match: " + data.matchPercent);
+
+                    $("#found-friend").show();
+                    $("#submit").hide();
+                    console.log(data);
+                });
+            });
+        </script>
 </body>
 
 </html>
-
-<!-- scripts section -->
-<script src="../js/genQ.js"></script>
-<script src="../js/submit.js"></script>
