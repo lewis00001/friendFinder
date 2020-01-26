@@ -5,14 +5,14 @@ var friends = [
 		photo: "https://newsrescue.com/wp-content/uploads/2015/04/happy-person-582x375.jpg",
 		scores: [
 			"5",
+			"4",
+			"5",
+			"5",
+			"4",
 			"5",
 			"5",
 			"5",
-			"5",
-			"5",
-			"5",
-			"5",
-			"5",
+			"4",
 			"5"
 		]
 	},
@@ -20,16 +20,16 @@ var friends = [
 		name: "Snoober McBoonfifle",
 		photo: "https://i.dailymail.co.uk/i/pix/2017/12/20/16/477B492700000578-5111233-image-a-5_1513785630536.jpg",
 		scores: [
-			"3",
+			"2",
 			"1",
-			"5",
-			"4",
+			"2",
 			"1",
-			"5",
-			"4",
 			"1",
-			"5",
-			"3"
+			"2",
+			"1",
+			"1",
+			"1",
+			"2"
 		]
 	},
 	{

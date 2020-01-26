@@ -55,6 +55,9 @@ module.exports = function (app) {
             scores: iScores
         };
 
+        friends.push(cUser);
+        console.log(friends);
+
         // returns best match
         res.json(match);
     });
